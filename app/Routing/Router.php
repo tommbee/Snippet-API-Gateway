@@ -2,24 +2,24 @@
 
 namespace Snippet\Routing;
 
+use Snippet\Controllers\RequestController;
+
 class Router {
-    
+
+    private $request_controller;
+
+    function __construct(RequestController $request_controller)
+    {
+        $this->request_controller = $request_controller;
+    }
+
     public $routes = [
         'GET'    => [],
         'POST'   => [],
         'PUT'    => [],
-        'DELETE' => [],   
+        'DELETE' => [],
     ];
 
-    public $patterns = [
-        ':any'  => '.*',
-        ':id'   => '[0-9]+',
-        ':slug' => '[a-z-0-9\-]+',
-        ':name' => '[a-zA-Z]+',
-    ];
-    
-    const REGVAL = '/({:.+?})/';    
-   
     public function any($path, $handler){
         $this->addRoute('GET', $path, $handler);
         $this->addRoute('POST', $path, $handler);
@@ -27,69 +27,86 @@ class Router {
         $this->addRoute('DELETE', $path, $handler);
     }
 
-    public function get($path, $handler){
-        $this->addRoute('GET', $path, $handler);
-    }
-    
-    public function post($path, $handler){
-        $this->addRoute('POST', $path, $handler);
-    }
-    
-    public function put($path, $handler){
-        $this->addRoute('PUT', $path, $handler);
+    public function get($path, $handler, $type){
+        $this->addRoute('GET', $path, $handler, $type);
     }
 
-    public function delete($path, $handler){
-        $this->addRoute('DELETE', $path, $handler);
+    public function post($path, $handler, $type){
+        $this->addRoute('POST', $path, $handler, $type);
     }
 
-    protected function addRoute($method, $path, $handler){
-        array_push($this->routes[$method], [$path => $handler]);
+    public function put($path, $handler, $type){
+        $this->addRoute('PUT', $path, $handler, $type);
     }
 
-    public function match(array $server = [], array $post)
+    public function delete($path, $handler, $type){
+        $this->addRoute('DELETE', $path, $handler, $type);
+    }
+
+    protected function addRoute($method, $path, $handler, $type){
+        array_push($this->routes[$method], [$path => ['route' => $handler, 'type' => $type] ]);
+    }
+
+    public function match(array $server = [])
     {
+
         $requestMethod = $server['REQUEST_METHOD'];
         $requestUri    = $server['REQUEST_URI'];
+        $requestBody = [];
+        if( isset($server['CONTENT_TYPE']) ) {
+            $rawData = file_get_contents("php://input");
+            $requestBody['type'] = $server['CONTENT_TYPE'];
+            $requestBody['data'] = $rawData;
+        }
 
-        $restMethod = $this->getRestfullMethod($server); 
+        $restMethod = $this->getRestfullMethod($server);
 
         if (null === $restMethod && !in_array($requestMethod, array_keys($this->routes))) {
             return false;
         }
-        
+
         $method = $restMethod ?: $requestMethod;
 
         foreach ($this->routes[$method]  as $resource) {
 
-            $args    = []; 
-            $route   = key($resource); 
-            $handler = reset($resource);
-
-            if(preg_match(self::REGVAL, $route)){
-                list($args, ,$route) = $this->parseRegexRoute($requestUri, $route);  
-            }
+            $args    = $this->getArgs($requestUri);
+            $route   = key($resource);
+            $handler = reset($resource)['route'];
+            $type = reset($resource)['type'];
+            $requestUri = $this->getUrl($requestUri);
 
             if(!preg_match("#^$route$#", $requestUri)) {
-                // Don't match - bug out
+                // No matches
                 unset($this->routes[$method]);
                 continue;
             }
 
-            if(is_string($handler) && strpos($handler, '@')){
-                list($ctrl, $method) = explode('@', $handler); 
-                return ['controller' => $ctrl, 'method' => $method, 'args' => $args];
-            }
-
-            if(empty($args)){
-                return $handler(); 
-            }
-
-             return call_user_func_array($handler, $args);
+            return $this->requestDispatcher(['route' => $handler, 'method' => $method, 'args' => $args, 'type' => $type, 'body' => $requestBody]);
 
           }
-     }
-   
+
+          return false;
+    }
+
+    private function requestDispatcher($resource) {
+
+        $route      = $resource['route'];
+        $method     = $resource['method'];
+        $args       = $resource['args'];
+        $type       = $resource['type'];
+        $body       = $resource['body'];
+
+        switch ($type) {
+            case 'http':
+                return $this->request_controller->sendHttpRequest($route, $method, $args, $body);
+                break;
+            default:
+                return $this->request_controller->sendHttpRequest($route, $method, $args, $body);
+                break;
+        }
+
+    }
+
     protected function getRestfullMethod($postVar)
     {
         if(array_key_exists('REQUEST_METHOD', $postVar)){
@@ -98,31 +115,24 @@ class Router {
                 return $method;
             }
         }
-    } 
-
-
-
-    protected function parseRegexRoute($requestUri, $resource)
-    {
-        $route = preg_replace_callback(self::REGVAL, function($matches) {
-            $patterns = $this->patterns; 
-            $matches[0] = str_replace(['{', '}'], '', $matches[0]);
-            
-            if(in_array($matches[0], array_keys($patterns))){                       
-                return  $patterns[$matches[0]];
-            }
-
-        }, $resource);
-
-       
-        $regUri = explode('/', $resource); 
-       
-        $args = array_diff(
-                    array_replace($regUri, 
-                    explode('/', $requestUri)
-                ), $regUri
-            );  
-
-        return [array_values($args), $resource, $route]; 
     }
+
+    public function getUrl($url)
+    {
+        $parts = parse_url($url);
+        return $parts['path'];
+    }
+
+    protected function getArgs($url)
+    {
+        $query = [];
+        $parts = parse_url($url);
+
+        if(isset($parts['query'])) {
+            parse_str($parts['query'], $query);
+        }
+
+        return $query;
+    }
+
 }
