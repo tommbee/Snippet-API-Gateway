@@ -1,0 +1,17 @@
+{
+    "name": "Snippet/snippet",
+    "require": {
+        "symfony/yaml": "2.*",
+        "php-di/php-di": "^5.4",
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "autoload": {
+        "psr-4": {"Snippet\\": "app/"}
+    },
+    "authors": [
+        {
+            "name": "Thomas Bennett",
+            "email": "tombennett86@hotmail.co.uk"
+        }
+    ]
+}
