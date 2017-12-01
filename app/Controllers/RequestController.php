@@ -11,7 +11,7 @@ class RequestController {
 	public function sendHttpRequest($route, $method, $args, $body = [])
 	{
 
-		$request = new HttpRequest;
+		$request = new HttpRequest(new \GuzzleHttp\Client);
 
 		if(!empty($args)) {
 			$route .= '?' . http_build_query($args);

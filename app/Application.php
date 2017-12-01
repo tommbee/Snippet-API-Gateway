@@ -3,14 +3,13 @@
 namespace Snippet;
 
 use Snippet\Routing\Router;
-use Snippet\Controllers\RequestController;
 
 class Application implements \ArrayAccess {
 
     public function __construct()
     {
         $this['route'] = $this->store(function() {
-            return new Router(new RequestController);
+            return new Router(new \Snippet\Controllers\RequestController);
         });
     }
 
@@ -79,5 +78,7 @@ class Application implements \ArrayAccess {
             http_response_code(404);
             die();
         }
+
+        return $success;
     }
 }

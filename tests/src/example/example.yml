@@ -1,0 +1,8 @@
+'/search':
+  route: 'https://jsonplaceholder.typicode.com/posts'
+  method: 'get'
+  type: 'http'
+'/login':
+  route: 'http://hammonds.local/login'
+  method: 'post'
+  type: 'http'

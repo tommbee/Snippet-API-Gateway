@@ -11,6 +11,12 @@ class HttpRequest implements RequestInterface {
 
   protected $url;
   protected $data;
+  protected $client;
+
+  function __construct(Client $client)
+  {
+    $this->client = $client;
+  }
 
   public function setUrl($route)
   {
@@ -32,12 +38,12 @@ class HttpRequest implements RequestInterface {
       $options['headers'] = ['Content-Type' => $this->data['type']];
     }
 
-    $client = new Client();
-
-    $response = $client->request($method, $this->url, $options);
+    $response = $this->client->request($method, $this->url, $options);
 
     # Response
-    header("Content-Type:{$response->getHeader('Content-Type')[0]}");
+    if(!is_null($response->getHeader('Content-Type')) && isset($response->getHeader('Content-Type')[0])) {
+      header("Content-Type:{$response->getHeader('Content-Type')[0]}");
+    }
 
     $body = $response->getBody();
     while (!$body->eof()) {

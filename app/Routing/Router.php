@@ -50,8 +50,8 @@ class Router {
     public function match(array $server = [])
     {
 
-        $requestMethod = $server['REQUEST_METHOD'];
-        $requestUri    = $server['REQUEST_URI'];
+        $requestMethod = (isset($server['REQUEST_METHOD'])) ? $server['REQUEST_METHOD'] : null;
+        $requestUri    = (isset($server['REQUEST_URI'])) ? $server['REQUEST_URI'] : null;
         $requestBody = [];
         if( isset($server['CONTENT_TYPE']) ) {
             $rawData = file_get_contents("php://input");
