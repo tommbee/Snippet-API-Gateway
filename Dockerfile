@@ -11,6 +11,7 @@ ADD public /app/public
 ADD vendor /app/vendor
 ADD tests/ /app/tests
 ADD phpunit.xml /app/
+ADD bootstrap.php /app/
 ADD setup.sh /
 
 EXPOSE 80
