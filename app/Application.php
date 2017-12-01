@@ -6,7 +6,7 @@ use Snippet\Routing\Router;
 
 class Application {
 
-    private $router;
+    public $router;
 
     public function __construct(Router $router)
     {

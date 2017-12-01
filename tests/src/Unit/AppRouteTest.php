@@ -17,7 +17,7 @@ class AppRouteTest extends TestCase {
       $method = $route['method'];
       $app->$method($endpoint, $route['route'], $route['type']);
     }
-    $this->assertArrayHasKey('/search', $app['route']->routes['GET'][0]);
+    $this->assertArrayHasKey('/search', $app->router->routes['GET'][0]);
   }
 
 
