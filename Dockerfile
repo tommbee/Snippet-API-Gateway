@@ -1,6 +1,7 @@
 FROM dusterio/ubuntu-php7:latest
 
 RUN apt-get -y update
+RUN apt-get install -y --no-install-recommends apt-utils
 RUN apt-get -y install php-xdebug
 
 ENV CHOWN_TO_USER=www-data
