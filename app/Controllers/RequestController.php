@@ -3,6 +3,7 @@
 namespace Snippet\Controllers;
 
 use Snippet\Requests\HttpRequest;
+use DI\ContainerBuilder;
 
 class RequestController {
 
@@ -10,8 +11,7 @@ class RequestController {
 
 	public function sendHttpRequest($route, $method, $args, $body = [])
 	{
-
-		$request = new HttpRequest(new \GuzzleHttp\Client);
+		$request = ContainerBuilder::buildDevContainer()->get('Snippet\Requests\HttpRequest');
 
 		if(!empty($args)) {
 			$route .= '?' . http_build_query($args);

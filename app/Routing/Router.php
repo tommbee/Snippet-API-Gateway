@@ -20,30 +20,28 @@ class Router {
         'DELETE' => [],
     ];
 
-    public function any($path, $handler){
-        $this->addRoute('GET', $path, $handler);
-        $this->addRoute('POST', $path, $handler);
-        $this->addRoute('PUT', $path, $handler);
-        $this->addRoute('DELETE', $path, $handler);
-    }
-
-    public function get($path, $handler, $type){
+    public function get($path, $handler, $type)
+    {
         $this->addRoute('GET', $path, $handler, $type);
     }
 
-    public function post($path, $handler, $type){
+    public function post($path, $handler, $type)
+    {
         $this->addRoute('POST', $path, $handler, $type);
     }
 
-    public function put($path, $handler, $type){
+    public function put($path, $handler, $type)
+    {
         $this->addRoute('PUT', $path, $handler, $type);
     }
 
-    public function delete($path, $handler, $type){
+    public function delete($path, $handler, $type)
+    {
         $this->addRoute('DELETE', $path, $handler, $type);
     }
 
-    protected function addRoute($method, $path, $handler, $type){
+    protected function addRoute($method, $path, $handler, $type)
+    {
         array_push($this->routes[$method], [$path => ['route' => $handler, 'type' => $type] ]);
     }
 

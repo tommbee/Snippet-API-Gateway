@@ -7,27 +7,15 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Stream\Stream;
 use GuzzleHttp\Stream\Utils;
 
-class HttpRequest implements RequestInterface {
+class HttpRequest extends SnippetRequest {
 
-  protected $url;
-  protected $data;
   protected $client;
 
   function __construct(Client $client)
   {
     $this->client = $client;
   }
-
-  public function setUrl($route)
-  {
-    $this->url = $route;
-  }
-
-  public function setRequestBody($data)
-  {
-    $this->data = $data;
-  }
-
+  
   public function sendRequest($method = "GET")
   {
 
