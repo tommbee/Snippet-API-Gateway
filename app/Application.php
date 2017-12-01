@@ -3,7 +3,6 @@
 namespace Snippet;
 
 use Snippet\Routing\Router;
-use function DI\value;
 
 class Application {
 

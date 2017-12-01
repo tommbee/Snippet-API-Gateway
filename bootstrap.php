@@ -11,9 +11,8 @@ if(!file_exists(__DIR__ . '/app/Config/routes.yml')) {
   throw new ConfigurationException('Route configuration file not found');
 }
 
-$routes = Yaml::parse(file_get_contents(__DIR__ . '/app/Config/routes.yml'));
-
 $app = ContainerBuilder::buildDevContainer()->get('Snippet\Application');
+$routes = Yaml::parse(file_get_contents(__DIR__ . '/app/Config/routes.yml'));
 
 foreach ($routes as $endpoint => $route) {
   $method = $route['method'];
