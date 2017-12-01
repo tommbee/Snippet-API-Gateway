@@ -27,7 +27,7 @@ class HttpRequestTest extends TestCase {
     $request->setUrl('/');
     $request->sendRequest();
     $this->assertContains(
-      'Content-type: text/html; charset=UTF-8', xdebug_get_headers()
+      'Content-type: text/html; charset=UTF-8', \xdebug_get_headers()
     );
   }
 
