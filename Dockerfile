@@ -1,23 +1,11 @@
-FROM dusterio/ubuntu-php7:latest
+FROM webdevops/php-nginx:7.1
 
-RUN apt-get -y update
-RUN apt-get install -y --no-install-recommends apt-utils
-RUN apt-get -y install php-xdebug
+env WEB_DOCUMENT_ROOT=/var/www/public
 
-ENV CHOWN_TO_USER=www-data
-
-RUN mkdir -p /app
-ADD app /app/app
-ADD public /app/public
-ADD vendor /app/vendor
-ADD tests/ /app/tests
-ADD phpunit.xml /app/
-ADD bootstrap.php /app/
-ADD setup.sh /
-
-EXPOSE 80
-
-RUN rm /etc/nginx/sites-enabled/default
-ADD site.conf /etc/nginx/sites-enabled/site.conf
-
-ENTRYPOINT ["/bin/sh", "/setup.sh"]
+RUN mkdir -p /var/www/public
+ADD app /var/www/app
+ADD public /var/www/public
+ADD vendor /var/www/vendor
+ADD tests/ /var/www/tests
+ADD phpunit.xml /var/www/
+ADD bootstrap.php /var/www/
