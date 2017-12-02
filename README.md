@@ -14,16 +14,17 @@ Edit the routes.yml file in app/Config. First state the URL endpoint. Then defin
 ```
 
 ## Deploy using docker.
-Build the container
+Deploy straight from docker hub ([https://hub.docker.com/r/tombennett/snippet/](https://hub.docker.com/r/tombennett/snippet/))
 ```
+docker pull tombennett/snippet
+```
+## Deploy docker instance locally
+```
+cd /path/to/repo
 docker build -t snippet .
-```
-Run an instance locally
-```
 docker run snippet
 ```
 or choose a port
 ```
-docker run -p 4000:80 snippet
+docker run -p 4000:80 snippet #http://0.0.0.0:4000
 ```
-http://0.0.0.0:4000/
