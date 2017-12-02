@@ -13,7 +13,7 @@ Edit the routes.yml file in app/Config. First state the URL endpoint. Then defin
   type: 'http'
 ```
 
-## Deploy using docker.
+## Deploy using docker
 Deploy straight from docker hub ([https://hub.docker.com/r/tombennett/snippet/](https://hub.docker.com/r/tombennett/snippet/))
 ```
 docker pull tombennett/snippet
